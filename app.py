@@ -1,18 +1,15 @@
+print("🚀 DEBUG: LOADED THE CORRECT NEW APP.PY")
 from fastapi import FastAPI, HTTPException
 import joblib
 import pandas as pd
 from pydantic import BaseModel
-import traceback
 
 app = FastAPI(title="Academic Success Predictor")
 
-# Load models
-try:
-    model = joblib.load('models/tuned_models/Student_Model_v1.joblib')
-    preprocessor = joblib.load('models/transformers/preprocessor.joblib')
-    le = joblib.load('models/transformers/label_encoder.joblib')
-except Exception as e:
-    print(f"Error loading models: {e}")
+# Load models - THESE PATHS MUST MATCH YOUR FOLDER
+model = joblib.load('models/tuned_models/RandomForest_tuned.joblib')
+preprocessor = joblib.load('models/transformers/preprocessor.joblib')
+le = joblib.load('models/transformers/label_encoder.joblib')
 
 class StudentData(BaseModel):
     Marital_status: int
@@ -50,66 +47,61 @@ class StudentData(BaseModel):
     Inflation_rate: float
     GDP: float
 
-@app.get("/")
-def home():
-    return {"message": "API is online."}
 
 @app.post("/predict")
 def predict(student: StudentData):
     try:
-        # We must map our Pydantic fields to the EXACT column names from the CSV
-        # This list must match the order and characters (/, ', ()) of your dataset.csv
-        data_dict = {
-            "Marital status": [student.Marital_status],
-            "Application mode": [student.Application_mode],
-            "Application order": [student.Application_order],
-            "Course": [student.Course],
-            "Daytime/evening attendance": [student.Daytime_evening_attendance],
-            "Previous qualification": [student.Previous_qualification],
-            "Nacionality": [student.Nacionality],
-            "Mother's qualification": [student.Mothers_qualification],
-            "Father's qualification": [student.Fathers_qualification],
-            "Mother's occupation": [student.Mothers_occupation],
-            "Father's occupation": [student.Fathers_occupation],
-            "Displaced": [student.Displaced],
-            "Educational special needs": [student.Educational_special_needs],
-            "Debtor": [student.Debtor],
-            "Tuition fees up to date": [student.Tuition_fees_up_to_date],
-            "Gender": [student.Gender],
-            "Scholarship holder": [student.Scholarship_holder],
-            "Age at enrollment": [student.Age_at_enrollment],
-            "International": [student.International],
-            "Curricular units 1st sem (credited)": [student.Curricular_units_1st_sem_credited],
-            "Curricular units 1st sem (enrolled)": [student.Curricular_units_1st_sem_enrolled],
-            "Curricular units 1st sem (evaluations)": [student.Curricular_units_1st_sem_evaluations],
-            "Curricular units 1st sem (approved)": [student.Curricular_units_1st_sem_approved],
-            "Curricular units 1st sem (grade)": [student.Curricular_units_1st_sem_grade],
-            "Curricular units 1st sem (without evaluations)": [student.Curricular_units_1st_sem_without_evaluations],
-            "Curricular units 2nd sem (credited)": [student.Curricular_units_2nd_sem_credited],
-            "Curricular units 2nd sem (enrolled)": [student.Curricular_units_2nd_sem_enrolled],
-            "Curricular units 2nd sem (evaluations)": [student.Curricular_units_2nd_sem_evaluations],
-            "Curricular units 2nd sem (approved)": [student.Curricular_units_2nd_sem_approved],
-            "Curricular units 2nd sem (grade)": [student.Curricular_units_2nd_sem_grade],
-            "Curricular units 2nd sem (without evaluations)": [student.Curricular_units_2nd_sem_without_evaluations],
-            "Unemployment rate": [student.Unemployment_rate],
-            "Inflation rate": [student.Inflation_rate],
-            "GDP": [student.GDP]
+        # 1. Convert Pydantic model to Dictionary
+        data = student.model_dump()
+        
+        # 2. Complete Mapping (Covers every single column name mismatch)
+        mapping = {
+            "Marital_status": "Marital status",
+            "Application_mode": "Application mode",
+            "Application_order": "Application order",
+            "Daytime_evening_attendance": "Daytime/evening attendance",
+            "Previous_qualification": "Previous qualification",
+            "Mothers_qualification": "Mother's qualification",
+            "Fathers_qualification": "Father's qualification",
+            "Mothers_occupation": "Mother's occupation",
+            "Fathers_occupation": "Father's occupation",
+            "Educational_special_needs": "Educational special needs",
+            "Tuition_fees_up_to_date": "Tuition fees up to date",
+            "Scholarship_holder": "Scholarship holder", # Fixed this missing line
+            "Age_at_enrollment": "Age at enrollment",
+            "Curricular_units_1st_sem_credited": "Curricular units 1st sem (credited)",
+            "Curricular_units_1st_sem_enrolled": "Curricular units 1st sem (enrolled)",
+            "Curricular_units_1st_sem_evaluations": "Curricular units 1st sem (evaluations)",
+            "Curricular_units_1st_sem_approved": "Curricular units 1st sem (approved)",
+            "Curricular_units_1st_sem_grade": "Curricular units 1st sem (grade)",
+            "Curricular_units_1st_sem_without_evaluations": "Curricular units 1st sem (without evaluations)",
+            "Curricular_units_2nd_sem_credited": "Curricular units 2nd sem (credited)",
+            "Curricular_units_2nd_sem_enrolled": "Curricular units 2nd sem (enrolled)",
+            "Curricular_units_2nd_sem_evaluations": "Curricular units 2nd sem (evaluations)",
+            "Curricular_units_2nd_sem_approved": "Curricular units 2nd sem (approved)",
+            "Curricular_units_2nd_sem_grade": "Curricular units 2nd sem (grade)",
+            "Curricular_units_2nd_sem_without_evaluations": "Curricular units 2nd sem (without evaluations)",
+            "Unemployment_rate": "Unemployment rate",
+            "Inflation_rate": "Inflation rate"
         }
-
-        df = pd.DataFrame(data_dict)
         
-        # 1. Transform using the saved preprocessor
-        X_processed = preprocessor.transform(df)
+        # 3. Rebuild dictionary with EXACT column names from CSV
+        final_input = {mapping.get(k, k): [v] for k, v in data.items()}
         
-        # 2. Predict
-        prediction_idx = model.predict(X_processed)
+        # 4. Create DataFrame
+        df = pd.DataFrame(final_input)
         
-        # 3. Decode
-        result = le.inverse_transform(prediction_idx)[0]
+        # 5. Pipeline Preprocessing (Scaling/One-Hot)
+        processed_data = preprocessor.transform(df)
         
-        return {"prediction": result}
-
+        # 6. Model Prediction
+        prediction = model.predict(processed_data)
+        
+        # 7. Decode and Return
+        label = le.inverse_transform(prediction)[0]
+        
+        return {"prediction": label}
+        
     except Exception as e:
-        # This will print the EXACT error in your VS Code terminal
-        print(traceback.format_exc())
+        print(f"Error details: {e}")
         raise HTTPException(status_code=500, detail=str(e))
