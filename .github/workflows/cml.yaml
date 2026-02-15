@@ -1,30 +1,36 @@
 name: CI using CML
 on: [push]
+permissions: write-all # Add this line to grant the bot permission to comment
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Setup CML
         uses: iterative/setup-cml@v2
+
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
+
       - name: Create CML Report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "# Model Evaluation Results" > report.md
-          echo "## Performance Metrics" >> report.md
+          echo "# 📊 Model Performance Report" > report.md
+          echo "Model: Tuned RandomForest" >> report.md
           echo "Accuracy: 0.77 | F1-Score: 0.75" >> report.md
-          echo "## Visualizations" >> report.md
+          echo "## 📈 Visualizations" >> report.md
           echo "### Confusion Matrix" >> report.md
           echo "![](./models/plots/RandomForest_confusion_matrix.png)" >> report.md
           echo "### Feature Importance" >> report.md
           echo "![](./models/plots/RandomForest_feature_importance.png)" >> report.md
+          
           cml comment create report.md
