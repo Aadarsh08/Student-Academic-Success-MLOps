@@ -21,39 +21,34 @@ This project demonstrates a complete MLOps workflow — from data preprocessing 
 X = df.drop(columns=[TARGET, 'id'])
 y = df[TARGET]
 ```
-2. Model Training & Hyperparameter Tuning
-Used GridSearchCV / RandomizedSearchCV for optimization.
+##2. Model Training & Hyperparameter Tuning
+     Used GridSearchCV / RandomizedSearchCV for optimization.
+     MLflow tracking for experiments.
 
-MLflow tracking for experiments.
+##3. Model Evaluation
+     Metrics: Accuracy, F1-score, Confusion Matrix.
+     Visualizations for performance analysis.
 
-3. Model Evaluation
-Metrics: Accuracy, F1-score, Confusion Matrix.
+##5. Experiment Tracking
+     MLflow for model registry and versioning.
 
-Visualizations for performance analysis.
+##6. Continuous Integration
+     GitHub Actions + CML for automated model reports.
 
-4. Experiment Tracking
-MLflow for model registry and versioning.
+##7. Deployment
+     FastAPI REST endpoint for serving predictions.
+     Dockerized for portability.
+     Hugging Face Spaces for live demo.
 
-5. Continuous Integration
-GitHub Actions + CML for automated model reports.
+##7. Monitoring
+     Logs + performance tracking for deployed models.
 
-6. Deployment
-FastAPI REST endpoint for serving predictions.
-
-Dockerized for portability.
-
-Hugging Face Spaces for live demo.
-
-7. Monitoring
-Logs + performance tracking for deployed models.
-
-📊 Results
-Balanced performance achieved after handling dataset imbalance.
-
-Deployed interactive predictor on Hugging Face Spaces:
+##📊 Results
+    Balanced performance achieved after handling dataset imbalance.
+    Deployed interactive predictor on Hugging Face Spaces:
 👉 Live Demo - https://huggingface.co/spaces/Aadarsh-Mishra/student-success-predictor?utm_source=copilot.com
 
-⚙️ How to Run Locally
+##⚙️ How to Run Locally
 ```
 git clone https://github.com/Aadarsh-Mishra/student-success-predictor
 cd student-success-predictor
@@ -61,16 +56,14 @@ pip install -r requirements.txt
 uvicorn app:app --reload
 ```
 
-🚀 Future Improvements
-Integrate drift detection.
+##🚀 Future Improvements
+    Integrate drift detection.
+    Add automated retraining pipeline.
+    Deploy on cloud (AWS/GCP/Azure).
 
-Add automated retraining pipeline.
-
-Deploy on cloud (AWS/GCP/Azure).
-
-📂 Repository Structure
+##📂 Repository Structure
 Code
-student-success-predictor/
+```student-success-predictor/
 │── data/                # Raw and processed datasets
 │── notebooks/           # Jupyter notebooks for exploration
 │── src/                 # Source code (preprocessing, training, evaluation)
@@ -80,6 +73,6 @@ student-success-predictor/
 │── .github/workflows/   # CI/CD pipelines
 │── requirements.txt     # Dependencies
 │── README.md            # Project documentation
-
-🏷️ License
-This project is licensed under the MIT License — feel free to use and adapt.
+```
+##🏷️ License
+      This project is licensed under the MIT License — feel free to use and adapt.
