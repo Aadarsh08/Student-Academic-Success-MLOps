@@ -17,36 +17,36 @@ This project demonstrates a complete MLOps workflow — from data preprocessing 
 ### 1. Data Preprocessing
 - Feature selection, encoding, imbalance handling.  
 - Example:
-```python
+```python      ****
 X = df.drop(columns=[TARGET, 'id'])
 y = df[TARGET]
 ```
 ## 2. Model Training & Hyperparameter Tuning
-     Used GridSearchCV / RandomizedSearchCV for optimization.
-     MLflow tracking for experiments.
+     a) Used GridSearchCV / RandomizedSearchCV for optimization.
+     b) MLflow tracking for experiments.
 
 ## 3. Model Evaluation
-     Metrics: Accuracy, F1-score, Confusion Matrix.
-     Visualizations for performance analysis.
+     a) Metrics: Accuracy, F1-score, Confusion Matrix.
+     b) Visualizations for performance analysis.
 
 ## 5. Experiment Tracking
-     MLflow for model registry and versioning.
+     a) MLflow for model registry and versioning.
 
 ## 6. Continuous Integration
-     GitHub Actions + CML for automated model reports.
+     a) GitHub Actions + CML for automated model reports.
 
 ## 7. Deployment
-     FastAPI REST endpoint for serving predictions.
-     Dockerized for portability.
-     Hugging Face Spaces for live demo.
+     a) FastAPI REST endpoint for serving predictions.
+     b) Dockerized for portability.
+     c) Hugging Face Spaces for live demo.
 
 ## 7. Monitoring
-     Logs + performance tracking for deployed models.
+     a) Logs + performance tracking for deployed models.
 
 ## 📊 Results
-    Balanced performance achieved after handling dataset imbalance.
-    Deployed interactive predictor on Hugging Face Spaces:
-👉 Live Demo - https://huggingface.co/spaces/Aadarsh-Mishra/student-success-predictor?utm_source=copilot.com
+    a) Balanced performance achieved after handling dataset imbalance.
+    b) Deployed interactive predictor on Hugging Face Spaces:
+    c) Live Demo - https://huggingface.co/spaces/Aadarsh-Mishra/student-success-predictor?utm_source=copilot.com
 
 ## ⚙️ How to Run Locally
 ```
@@ -57,9 +57,9 @@ uvicorn app:app --reload
 ```
 
 ## 🚀 Future Improvements
-    Integrate drift detection.
-    Add automated retraining pipeline.
-    Deploy on cloud (AWS/GCP/Azure).
+    a) Integrate drift detection.
+    b) Add automated retraining pipeline.
+    c) Deploy on cloud (AWS/GCP/Azure).
 
 ## 📂 Repository Structure
 Code
