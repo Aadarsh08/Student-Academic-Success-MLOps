@@ -20,7 +20,7 @@ This project demonstrates a complete MLOps workflow — from data preprocessing 
 ```python
 X = df.drop(columns=[TARGET, 'id'])
 y = df[TARGET]
-
+```
 2. Model Training & Hyperparameter Tuning
 Used GridSearchCV / RandomizedSearchCV for optimization.
 
@@ -54,10 +54,12 @@ Deployed interactive predictor on Hugging Face Spaces:
 👉 Live Demo - https://huggingface.co/spaces/Aadarsh-Mishra/student-success-predictor?utm_source=copilot.com
 
 ⚙️ How to Run Locally
+```
 git clone https://github.com/Aadarsh-Mishra/student-success-predictor
 cd student-success-predictor
 pip install -r requirements.txt
 uvicorn app:app --reload
+```
 
 🚀 Future Improvements
 Integrate drift detection.
